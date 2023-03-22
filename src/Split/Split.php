@@ -244,15 +244,15 @@ class Split {
     public function listSplits($receiverId)
     {
         try {
-            $auth       = new Auth();
-            $cardAuth   = $auth->cardAuth();
+            $auth = new Auth();
+            $token = $auth->token();
 
-            if (!$cardAuth) {
-                throw new Exception("Processo interrompido por falha na autenticaçao do cartão");
+            if (!$token) {
+                throw new Exception("Processo interrompido por falha no token");
             }
 
             $headers = array(
-                "Authorization: Bearer {$cardAuth}",
+                "Authorization: Bearer {$token}",
                 "cache-control: no-cache",
                 "content-type: application/json",
             );
@@ -279,7 +279,7 @@ class Split {
             $cardAuth   = $auth->cardAuth();
 
             if (!$cardAuth) {
-                throw new Exception("Processo interrompido por falha na autenticaçao do cartão");
+                throw new Exception("Processo interrompido por falha no token");
             }
 
             $headers = array(

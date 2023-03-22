@@ -23,21 +23,19 @@
  *
  */
 
-namespace IoPay\Seller;
+namespace IoPay\SharedCustomer;
 
-use CURLFile;
 use Exception;
 use IoPay\Authentication\Auth;
 use IoPay\Connection\Api;
 
-class Document
-{
+class Share {
 
     /**
-     * @param $sellerId
+     * @param $authorized_partner
      * @return false|mixed|void
      */
-    public function send($sellerId) {
+    public function authorizeSeller($authorized_partner) {
         try {
             $auth   = new Auth();
             $token  = $auth->token();
@@ -53,20 +51,18 @@ class Document
 
             $api = new Api();
             $api->setHeader($headers);
-            $api->setUri("/v1/sellers/documents/upload/residencia/{$sellerId}");
-            $api->setData([
-                'file'=> new CURLFILE('~/Desktop/upload.pdf')
-            ]);
+            $api->setUri("/v1/shared_customers/authorize_seller");
+            $api->setData(['authorized_partner' => $authorized_partner]);
             $api->connect();
 
             $response = $api->getResponse();
 
             if (isset($response['error'])) {
                 $error = json_encode($response['error']);
-                throw new Exception("Erro ao enviar documento: {$error}");
+                throw new Exception("Erro ao autorizar customer: {$error}");
             } else {
-                if (isset($response['io_seller_id'])) {
-                    return $response['io_seller_id'];
+                if (isset($response['id'])) {
+                    return $response['id'];
                 }
             }
         } catch (Exception $e) {
@@ -75,10 +71,10 @@ class Document
     }
 
     /**
-     * @param $sellerId
+     * @param $authId
      * @return false|mixed|void
      */
-    public function listDocuments($sellerId) {
+    public function get($authId) {
         try {
             $auth   = new Auth();
             $token  = $auth->token();
@@ -94,14 +90,51 @@ class Document
 
             $api = new Api();
             $api->setHeader($headers);
-            $api->setUri("/v1/sellers/documents/list/{$sellerId}");
+            $api->setUri("/v1/shared_customers/authorization/{$authId}");
             $api->connect('GET');
 
             $response = $api->getResponse();
 
             if (isset($response['error'])) {
                 $error = json_encode($response['error']);
-                throw new Exception("Erro ao listar documentos: {$error}");
+                throw new Exception("Erro ao listar auth: {$error}");
+            } else {
+                if (isset($response['id'])) {
+                    return $response['id'];
+                }
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @return false|mixed|void
+     */
+    public function listAuthorized() {
+        try {
+            $auth   = new Auth();
+            $token  = $auth->token();
+            if (!$token) {
+                throw new Exception("Processo interrompido por falha no token");
+            }
+
+            $headers = array(
+                "Authorization: Bearer {$token}",
+                "cache-control: no-cache",
+                "content-type: application/json",
+            );
+
+            $api = new Api();
+            $api->setHeader($headers);
+            $api->setUri("/v1/shared_customers/authorized_sellers");
+            $api->connect('GET');
+
+            $response = $api->getResponse();
+
+            if (isset($response['error'])) {
+                $error = json_encode($response['error']);
+                throw new Exception("Erro ao listar auth: {$error}");
             } else {
                 if (isset($response['total'])) {
                     return $response['total'];
@@ -113,11 +146,9 @@ class Document
     }
 
     /**
-     * @param $sellerId
-     * @param $documentId
-     * @return false|mixed
+     * @return false|mixed|void
      */
-    public function download($sellerId, $documentId) {
+    public function listAuthorizations() {
         try {
             $auth   = new Auth();
             $token  = $auth->token();
@@ -133,18 +164,51 @@ class Document
 
             $api = new Api();
             $api->setHeader($headers);
-            $api->setUri("/v1/sellers/documents/download/{$sellerId}/{$documentId}");
+            $api->setUri("/v1/shared_customers/authorizations");
             $api->connect('GET');
 
             $response = $api->getResponse();
 
             if (isset($response['error'])) {
                 $error = json_encode($response['error']);
-                throw new Exception("Erro ao baixar documentos: {$error}");
+                throw new Exception("Erro ao listar auth: {$error}");
             } else {
-                return $response;
+                if (isset($response['total'])) {
+                    return $response['total'];
+                }
             }
         } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @param $authId
+     * @return false|mixed
+     */
+    public function deleteAuthorization($authId)
+    {
+        try {
+            $auth   = new Auth();
+            $token  = $auth->token();
+
+            if (!$token) {
+                throw new Exception("Processo interrompido por falha no token");
+            }
+
+            $headers = array(
+                "Authorization: Bearer {$token}",
+                "cache-control: no-cache",
+                "content-type: application/json",
+            );
+
+            $api = new Api();
+            $api->setHeader($headers);
+            $api->setUri("/v1/shared_customers/authorization/{$authId}");
+            $api->connect('DELETE');
+
+            return $api->getResponse();
+        } catch (Exception $ex) {
             return false;
         }
     }
