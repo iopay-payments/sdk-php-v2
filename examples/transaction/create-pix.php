@@ -17,7 +17,7 @@
  * limitations under the License.
  *
  * @author    IoPay.
- * @copyright 2022-2022 IoPay.
+ * @copyright 2022-2023 IoPay.
  * @license   http://www.apache.org/licenses/LICENSE-2.0
  *
  */
