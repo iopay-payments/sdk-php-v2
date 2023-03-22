@@ -25,6 +25,7 @@
 
 namespace IoPay\Seller;
 
+use Exception;
 use IoPay\Authentication\Auth;
 use IoPay\Connection\Api;
 
