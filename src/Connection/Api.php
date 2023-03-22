@@ -132,13 +132,14 @@ class Api {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
 
-            if ($method == 'POST' || $method == 'PATCH') {
-                if ($method == 'POST') {
-                    curl_setopt($ch, CURLOPT_POST, 1);
-                }
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->data);
+            if ($method == 'POST') {
+                curl_setopt($ch, CURLOPT_POST, 1);
             } else {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            }
+
+            if ($this->data) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $this->data);
             }
 
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
