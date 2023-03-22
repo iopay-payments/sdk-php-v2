@@ -23,21 +23,56 @@
  *
  */
 
-namespace IoPay\Customer;
+namespace IoPay\Seller;
 
 use Exception;
 use IoPay\Authentication\Auth;
 use IoPay\Connection\Api;
 
-class Customer {
+class SellerPf {
 
+    protected $send_welcome_email;
+    protected $mcc;
     protected $first_name;
     protected $last_name;
     protected $email;
-    protected $taxpayer_id;
     protected $phone_number;
-    protected $gender;
+    protected $cpf;
+    protected $birthdate;
+    protected $statement_descriptor;
     protected $address;
+
+    /**
+     * @return mixed
+     */
+    public function getSendWelcomeEmail()
+    {
+        return $this->send_welcome_email;
+    }
+
+    /**
+     * @param mixed $send_welcome_email
+     */
+    public function setSendWelcomeEmail($send_welcome_email)
+    {
+        $this->send_welcome_email = $send_welcome_email;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMcc()
+    {
+        return $this->mcc;
+    }
+
+    /**
+     * @param mixed $mcc
+     */
+    public function setMcc($mcc)
+    {
+        $this->mcc = $mcc;
+    }
 
     /**
      * @return mixed
@@ -90,22 +125,6 @@ class Customer {
     /**
      * @return mixed
      */
-    public function getTaxpayerId()
-    {
-        return preg_replace("/[^0-9]/", "", $this->taxpayer_id);
-    }
-
-    /**
-     * @param mixed $taxpayer_id
-     */
-    public function setTaxpayerId($taxpayer_id)
-    {
-        $this->taxpayer_id = $taxpayer_id;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getPhoneNumber()
     {
         return $this->phone_number;
@@ -122,17 +141,49 @@ class Customer {
     /**
      * @return mixed
      */
-    public function getGender()
+    public function getCpf()
     {
-        return $this->gender;
+        return $this->cpf;
     }
 
     /**
-     * @param mixed $gender
+     * @param mixed $cpf
      */
-    public function setGender($gender)
+    public function setCpf($cpf)
     {
-        $this->gender = $gender;
+        $this->cpf = $cpf;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBirthdate()
+    {
+        return $this->birthdate;
+    }
+
+    /**
+     * @param mixed $birthdate
+     */
+    public function setBirthdate($birthdate)
+    {
+        $this->birthdate = $birthdate;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatementDescriptor()
+    {
+        return $this->statement_descriptor;
+    }
+
+    /**
+     * @param mixed $statement_descriptor
+     */
+    public function setStatementDescriptor($statement_descriptor)
+    {
+        $this->statement_descriptor = $statement_descriptor;
     }
 
     /**
@@ -149,22 +200,32 @@ class Customer {
     public function setAddress($address)
     {
         $this->address = $address;
-    }
+    } //object
 
     /**
      * @return array
      */
-    public function getData()
-    {
-        return array(
-            'first_name'    => $this->getFirstName(),
-            'last_name'     => $this->getLastName(),
-            'email'         => $this->getEmail(),
-            'taxpayer_id'   => $this->getTaxpayerId(),
-            'phone_number'  => $this->getPhoneNumber(),
-            'gender'        => $this->getGender(),
-            'address'       => $this->getAddress()
+    public function getData() {
+        $data = array(
+            'mcc'                   => $this->getMcc(),
+            'first_name'            => $this->getFirstName(),
+            'last_name'             => $this->getLastName(),
+            'email'                 => $this->getEmail(),
+            'phone_number'          => $this->getPhoneNumber(),
+            'birthdate'             => $this->getBirthdate(),
+            'statement_descriptor'  => $this->getStatementDescriptor(),
+            'address'               => $this->getAddress(),
         );
+
+        if ($this->getSendWelcomeEmail()) {
+            $data['send_welcome_email'] = $this->getSendWelcomeEmail();
+        }
+
+        if ($this->getCpf()) {
+            $data['cpf'] = $this->getCpf();
+        }
+
+        return $data;
     }
 
     public function create() {
@@ -183,7 +244,7 @@ class Customer {
 
             $api = new Api();
             $api->setHeader($headers);
-            $api->setUri("/v1/customer/new");
+            $api->setUri("/v1/sellers/create/individuals");
             $api->setData($this->getData());
             $api->connect();
 
@@ -191,10 +252,10 @@ class Customer {
 
             if (isset($response['error'])) {
                 $error = json_encode($response['error']);
-                throw new Exception("Erro ao criar comprador: {$error}");
+                throw new Exception("Erro ao criar seller pessoa fisica: {$error}");
             } else {
-                if (isset($response['success']['id'])) {
-                    return $response['success']['id'];
+                if (isset($response['io_seller_id'])) {
+                    return $response['io_seller_id'];
                 }
             }
         } catch (Exception $e) {
@@ -202,15 +263,14 @@ class Customer {
         }
     }
 
-    public function get($compradorId) {
+    public function edit($sellerId) {
         try {
-            $auth = new Auth();
-            $token = $auth->token();
+            $auth   = new Auth();
+            $token  = $auth->token();
             if (!$token) {
                 throw new Exception("Processo interrompido por falha no token");
             }
 
-            /* Constuindo requisição e conectando */
             $headers = array(
                 "Authorization: Bearer {$token}",
                 "cache-control: no-cache",
@@ -219,12 +279,20 @@ class Customer {
 
             $api = new Api();
             $api->setHeader($headers);
-            $api->setUri("/v1/customer/get/{$compradorId}");
-            $api->connect('GET');
+            $api->setUri("/v1/sellers/update/individuals/{$sellerId}");
+            $api->setData($this->getData());
+            $api->connect('PATCH');
 
             $response = $api->getResponse();
 
-            return $response;
+            if (isset($response['error'])) {
+                $error = json_encode($response['error']);
+                throw new Exception("Erro ao editar seller pessoa fisica: {$error}");
+            } else {
+                if (isset($response['success']['id'])) {
+                    return $response['success']['id'];
+                }
+            }
         } catch (Exception $e) {
             return false;
         }

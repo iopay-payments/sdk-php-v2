@@ -132,8 +132,10 @@ class Api {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
 
-            if ($method == 'POST') {
-                curl_setopt($ch, CURLOPT_POST, 1);
+            if ($method == 'POST' || $method == 'PATCH') {
+                if ($method == 'POST') {
+                    curl_setopt($ch, CURLOPT_POST, 1);
+                }
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $this->data);
             } else {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
