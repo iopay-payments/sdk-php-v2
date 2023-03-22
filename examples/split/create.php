@@ -25,14 +25,26 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php'; // Autoload files using Composer autoload
 
-use IoPay\Authentication\Auth;
+use IoPay\Logger\Log;
+use IoPay\Split\Split;
+use IoPay\Source\Split as Source;
 
-$logger = new IoPay\Logger\Log();
-$auth   = new Auth();
-$token  = $auth->token();
+/* Criando um split */
 
-if (!$token) {
-    $logger->log("Não foi possivel gerar o token");
-} else {
-    $logger->log("Token {$token} gerado com sucesso");
+$split = new Split();
+$split->setReceiver('9f9e387d-f13f-4c64-b7ea-0e2884301d40'); //io_seller_id
+$split->setReceiverFeeType(Source::RECEIVER_FEE_TYPE_PROPORTIONAL);
+$split->setSplitType(Source::SPLIT_TYPE_PERCENT);
+$split->setSplitValue(10);
+$split->setMinAmount(100);
+$split->setMaxAmount(100000);
+$split->setChargebackLiable(1);
+
+/* Testando a saída do array para o split */
+$logger = new Log();
+$logger->log($split->getData());
+
+$splitId = $split->create();
+if ($splitId) {
+    $logger->log("Split {$splitId} criado com sucesso!");
 }

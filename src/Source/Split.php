@@ -23,16 +23,12 @@
  *
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php'; // Autoload files using Composer autoload
+namespace IoPay\Source;
 
-use IoPay\Authentication\Auth;
-
-$logger = new IoPay\Logger\Log();
-$auth   = new Auth();
-$token  = $auth->token();
-
-if (!$token) {
-    $logger->log("Não foi possivel gerar o token");
-} else {
-    $logger->log("Token {$token} gerado com sucesso");
+class Split {
+    const RECEIVER_FEE_TYPE_FREE            = 'free';
+    const RECEIVER_FEE_TYPE_PROPORTIONAL    = 'proportional';
+    const RECEIVER_FEE_TYPE_FULL            = 'full';
+    CONST SPLIT_TYPE_FIXED                  = 'fixed';
+    CONST SPLIT_TYPE_PERCENT                = 'percent';
 }

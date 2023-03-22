@@ -1,6 +1,6 @@
 <?php
 /**
- * 2022-2022 [IoPay]
+ * 2022-2023 [IoPay]
  *
  * NOTICE OF LICENSE
  *

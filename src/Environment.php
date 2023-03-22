@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 2022-2022 [IoPay]
+ * 2022-2023 [IoPay]
  *
  * NOTICE OF LICENSE
  *
@@ -51,7 +51,7 @@ class Environment
      * https://minhaconta.iopay.com.br
      */
     const IOPAY_EMAIL       = "integracao@iopay.com.br";
-    const IOPAY_SECRET      = "bdSt_xTiKcbMj2EiDBuGjKdn5hKqv+GmqRNFTwK39HFKf=Ecf-";
+    const IOPAY_SECRET      = '$AIKb~BloVE4DbJc!E-RI6oKq+PC~cn6TVZ-Lssed=iJdb1KW2';
     const IOPAY_SELLER_ID   = "07b53180-6e59-47a1-b1c4-97374fbb6de0";
 
     /*
