@@ -36,7 +36,6 @@ $business = new Business();
 $business->setName("Lojas Silva");
 $business->setEmail("lojassilva@iopay.com.br");
 $business->setPhoneNumber("(91)998281409");
-$business->setCnpj("31323401000106");
 $business->setOpeningDate("2000-02-28");
 $business->setWebsite("https://lojassilva.com.br");
 $businessAddress = new Address();
@@ -55,7 +54,7 @@ $owner->setFirstName("Juventino");
 $owner->setLastName("Silva");
 $owner->setEmail("juventino@iopay.com.br");
 $owner->setPhoneNumber("(91)998281409");
-$owner->setCpf("93347192060");
+$owner->setCpf("03305553081");
 $owner->setBirthdate("2000-02-28");
 $ownerAddress = new Address();
 $ownerAddress->setLine1('Av 9 de Julho');
@@ -80,7 +79,8 @@ $sellerPj->setOwnerAddress($ownerAddress->getData());
 $logger = new Log();
 $logger->log($sellerPj->getData());
 
-$sellerPjId = $sellerPj->create();
+/* Editando seller passando o io_seller_id */
+$sellerPjId = $sellerPj->edit('71115a47-978a-4c00-9350-4bec95a01f5b ');
 if ($sellerPjId) {
-    $logger->log("Seller PJ {$sellerPjId} criado com sucesso!");
+    $logger->log("Seller PJ {$sellerPjId} alterado com sucesso!");
 }

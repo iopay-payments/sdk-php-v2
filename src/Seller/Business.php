@@ -135,14 +135,19 @@ class Business {
      */
     public function getData()
     {
-        return array(
+        $data = array(
             'name'          => $this->getName(),
             'email'         => $this->getEmail(),
             'phone_number'  => $this->getPhoneNumber(),
-            'cnpj'          => $this->getCnpj(),
             'opening_date'  => $this->getOpeningDate(),
             'website'       => $this->getWebsite(),
         );
+
+        if ($this->getCnpj()) {
+            $data['cnpj'] = $this->getCnpj();
+        }
+
+        return $data;
     }
 
 }
