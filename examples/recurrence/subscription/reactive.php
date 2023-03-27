@@ -23,25 +23,16 @@
  *
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php'; // Autoload files using Composer autoload
+require_once __DIR__ . '/../../../vendor/autoload.php'; // Autoload files using Composer autoload
 
-use IoPay\Creditcard\Associate;
+use IoPay\Recurrence\Subscription;
 use IoPay\Logger\Log;
 
-/* cartão existente e um customer existente */
-$customerId = "5095dd6991fb49f3a0825e646444d86e";
-$cardToken  = "3193d449832f49448beab7439b9705d4";
+$subscriptionId = "2f8c7e46-9f8a-46f3-9ed4-7fa4b95c1087";
+$subscription = new Subscription();
+
+$response = $subscription->reactive($subscriptionId);
 
 $logger = new Log();
-$logger->log("--- Associando dados gerados ---");
-$logger->log("Customer ID: {$customerId}");
-$logger->log("Card Token: {$cardToken}");
-
-/* Associando cartão ao customer */
-$associate = new Associate();
-$associate->setIdCard($cardToken);
-$associate->setIdCustomer($customerId);
-
-$response = $associate->associate();
-$logger->log("--- Retorno da associação ---");
+$logger->log("---- Retorno da API ----");
 $logger->log($response);

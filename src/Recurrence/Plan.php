@@ -202,7 +202,9 @@ class Plan {
         );
     }
 
-
+    /**
+     * @return false|mixed|void
+     */
     public function create() {
         try {
             $auth   = new Auth();
@@ -238,6 +240,10 @@ class Plan {
         }
     }
 
+    /**
+     * @param $planId
+     * @return false|mixed
+     */
     public function details($planId)
     {
         try {
@@ -265,6 +271,9 @@ class Plan {
         }
     }
 
+    /**
+     * @return false|mixed
+     */
     public function listPlans()
     {
         try {
@@ -283,7 +292,7 @@ class Plan {
 
             $api = new Api();
             $api->setHeader($headers);
-            $api->setUri("/v1/sellers/list");
+            $api->setUri("/v1/recurrence/plan/list");
             $api->connect('GET');
 
             return $api->getResponse();
@@ -292,6 +301,10 @@ class Plan {
         }
     }
 
+    /**
+     * @param $planId
+     * @return false|mixed
+     */
     public function deletePlan($planId)
     {
         try {

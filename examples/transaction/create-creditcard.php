@@ -41,7 +41,7 @@ $product->setAmount("4509"); //sempre em centavos
 $products[] = $product->getData();
 
 $customerId     = "30cdb54284424e10b9beae475c8c9879";
-$cardToken      = "2c4de4ff34ef404cb2141e89a1695434";
+$cardToken      = "584219e70c174d4b91e8399762a7d241";
 
 $transaction = new Transaction();
 $transaction->setCustomerId($customerId);
